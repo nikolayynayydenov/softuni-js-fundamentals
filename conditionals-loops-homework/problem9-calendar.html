@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monthly Calendar</title>
+    <style>
+        .prev-month, .next-month { color: #CCC }
+        .today { font-weight: bold; background: #DDD; }
+        .title { background: #AAAAFF; margin: 10px 0; padding:5px }
+        table { border: 1px solid #CCC;}
+        td { text-align: center; }
+        #calendarCode { width: 100%; }
+    </style>
+    <script>
+        function calendar([day, month, year])
+        {
+            [day, month, year] = [day, month, year].map(Number);
+            let date = new Date(year, month - 1, 1);
+            let today = new Date(year, month - 1, day);
+            let nextMonth = new Date(date);
+            let prevMonth = new Date(date);
+            let isLastDayOfMonthReached = false;
+            let html = '';
+
+            date.setDate(date.getDate() - date.getDay()); // return to the first day that is going to be diaplayed
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            prevMonth.setMonth(prevMonth.getMonth() - 1);
+
+            html += '<table>\n';
+            html += '  <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>\n';
+
+            while(!isLastDayOfMonthReached) {
+                html += '  <tr>';
+                for (let i = 0; i < 7; i += 1) {
+                    let class_ = '';
+                    if(date.getMonth() === prevMonth.getMonth()) {
+                        class_ = ' class="prev-month"';
+                    }
+                    else if(date.getMonth() === nextMonth.getMonth()) {
+                        class_ = ' class="next-month"';
+                    }
+                    else if(date.getDate() === today.getDate() &&
+                        date.getMonth() === today.getMonth()) {
+                        class_ = ' class="today"';
+                    }
+
+
+                    html += `<td${class_}>${date.getDate()}</td>`;
+
+                    date.setDate(date.getDate() + 1);
+                    isLastDayOfMonthReached = isLastDayOfMonthReached ||
+                            date.getMonth() === nextMonth.getMonth() &&
+                                    date.getDate() === 1;
+                }
+
+                html += '</tr>\n';
+            }
+
+            html += '</table>';
+
+            return html;
+        }
+    </script>
+</head>
+
+<body>
+Day: <input id="day" type="number" value="24" />
+Month: <input id="month" type="number" value="12" />
+Year: <input id="year" type="number" value="2012" />
+<input type="button" value="Show"
+       onclick="let calendarHTML =
+            calendar([document.getElementById('day').value,
+                document.getElementById('month').value,
+                document.getElementById('year').value]);
+            document.getElementById('calendar').innerHTML = calendarHTML;
+            document.getElementById('calendarCode').innerText = calendarHTML" />
+<div class="title">Calendar:</div>
+<div id="calendar">Calendar will be shown here</div>
+<div class="title">HTML:</div>
+<textarea rows="12" id="calendarCode"></textarea>
+</body>
+
+</html>
